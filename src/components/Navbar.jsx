@@ -1,131 +1,140 @@
-import { useState, useEffect, useRef } from 'react';
-import { animate, stagger } from 'animejs';
+import React from 'react';
 
-export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const navRef = useRef(null);
-  const logoRef = useRef(null);
-  const linksRef = useRef(null);
-  const ctaRef = useRef(null);
-
-  // Scroll detection for shadow effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Anime.js entrance animation on mount
-  useEffect(() => {
-    const nav = navRef.current;
-    if (!nav) return;
-
-    // Set initial state
-    nav.style.opacity = '0';
-    nav.style.transform = 'translateY(-30px)';
-
-    // Animate navbar slide down + fade in
-    animate(nav, {
-      opacity: [0, 1],
-      translateY: [-30, 0],
-      duration: 800,
-      easing: 'easeOutCubic',
-      delay: 200,
-    });
-
-    // Stagger animate the nav links
-    const linkItems = linksRef.current?.querySelectorAll('.fw-nav-link');
-    if (linkItems && linkItems.length > 0) {
-      animate(linkItems, {
-        opacity: [0, 1],
-        translateY: [-15, 0],
-        delay: stagger(80, { start: 600 }),
-        duration: 500,
-        easing: 'easeOutCubic',
-      });
-    }
-
-    // Animate the CTA button
-    if (ctaRef.current) {
-      animate(ctaRef.current, {
-        opacity: [0, 1],
-        scale: [0.85, 1],
-        duration: 600,
-        easing: 'easeOutBack',
-        delay: 1000,
-      });
-    }
-  }, []);
-
-  const handleLinkClick = (e, targetId) => {
+const Navbar = ({ onNavClick }) => {
+  const handleLogoClick = (e) => {
     e.preventDefault();
-    const element = document.getElementById(targetId);
-    if (element) {
-      const offsetTop = element.offsetTop;
-      window.scrollTo({
-        top: offsetTop - 80,
-        behavior: 'smooth',
-      });
+    if (onNavClick) {
+      onNavClick('#top');
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const navLinks = [
-    { label: 'Home', target: 'hero' },
-    { label: 'About', target: 'hero' },
-    { label: 'Showcase', target: 'showcase' },
-    { label: 'Prowess', target: 'prowess' },
-    { label: 'Contact', target: 'contact' },
-  ];
+  const handleLinkClick = (e, target) => {
+    e.preventDefault();
+    if (onNavClick) {
+      onNavClick(target);
+    } else {
+      const element = document.querySelector(target);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
 
   return (
-    <nav
-      ref={navRef}
-      className={`fw-navbar ${isScrolled ? 'fw-navbar--scrolled' : ''}`}
-    >
-      <div className="fw-navbar__inner">
-        {/* Left: Logo + Brand */}
-        <div
-          ref={logoRef}
-          className="fw-navbar__logo"
-          onClick={(e) => handleLinkClick(e, 'hero')}
-        >
-          <img
-            src="/assets/MC logo.png"
-            alt="Motion Craft Logo"
-            className="fw-navbar__logo-img"
-          />
-          <span className="fw-navbar__brand">Motion Graphics</span>
-        </div>
+    <nav className="nav-container">
+      <style>{`
+        .nav-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          z-index: 1000;
+          background: rgba(8, 18, 16, 0.75); /* Match brand bg dark green */
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(234, 229, 217, 0.05);
+        }
 
-        {/* Center: Nav Links */}
-        <ul ref={linksRef} className="fw-navbar__links">
-          {navLinks.map((link) => (
-            <li key={link.label} className="fw-nav-link" style={{ opacity: 0 }}>
-              <a
-                href={`#${link.target}`}
-                onClick={(e) => handleLinkClick(e, link.target)}
-                className="fw-navbar__link"
-              >
-                {link.label}
-                <span className="fw-navbar__link-underline"></span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        .nav-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 20px 40px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
 
-        {/* Right: CTA Button */}
-        <a
-          ref={ctaRef}
-          href="#contact"
-          className="fw-navbar__cta"
-          onClick={(e) => handleLinkClick(e, 'contact')}
-          style={{ opacity: 0 }}
-        >
-          Get Started
+        @media (max-width: 768px) {
+          .nav-inner {
+            padding: 16px 20px;
+          }
+        }
+
+        .nav-logo {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-family: var(--font-sans);
+          font-weight: 700;
+          font-size: 0.95rem;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          color: var(--color-text-primary);
+          opacity: 0; /* Animated on load */
+          transform: translateY(-10px);
+          transition: color 0.3s;
+        }
+
+        .nav-logo:hover {
+          color: var(--color-accent);
+        }
+
+        .nav-logo-img {
+          height: 24px;
+          width: auto;
+          object-fit: contain;
+          transition: transform 0.5s ease;
+        }
+
+        .nav-logo:hover .nav-logo-img {
+          transform: rotate(360deg);
+        }
+
+        .nav-links {
+          display: flex;
+          gap: 40px;
+          opacity: 0; /* Animated on load */
+          transform: translateY(-10px);
+        }
+
+        @media (max-width: 768px) {
+          .nav-links {
+            gap: 24px;
+          }
+        }
+
+        .nav-link-item {
+          font-size: 0.88rem;
+          font-weight: 500;
+          color: var(--color-text-muted);
+          transition: color 0.3s ease;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+        }
+
+        .nav-link-item:hover {
+          color: var(--color-text-primary);
+        }
+      `}</style>
+
+      <div className="nav-inner">
+        <a href="#top" onClick={handleLogoClick} className="nav-logo hover-target">
+          <img src="/assets/MC_logo.png" alt="MC Logo" className="nav-logo-img" />
+          <span>MotionCraft</span>
         </a>
+        <div className="nav-links">
+          <a
+            href="#work"
+            onClick={(e) => handleLinkClick(e, '#work')}
+            className="nav-link-item magnetic-link hover-target"
+          >
+            Work
+            <span className="animated-underline"></span>
+          </a>
+          <a
+            href="#about"
+            onClick={(e) => handleLinkClick(e, '#about')}
+            className="nav-link-item magnetic-link hover-target"
+          >
+            About
+            <span className="animated-underline"></span>
+          </a>
+        </div>
       </div>
     </nav>
   );
-}
+};
+
+export default Navbar;

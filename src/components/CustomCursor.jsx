@@ -11,7 +11,7 @@ export default function CustomCursor() {
 
     if (!dot || !ring) return;
 
-    // Check if device supports hover (desktop)
+    // Check if device supports hover (desktop mouse)
     const supportsHover = window.matchMedia('(hover: hover)').matches;
     if (!supportsHover) {
       dot.style.display = 'none';
@@ -38,16 +38,14 @@ export default function CustomCursor() {
 
     const onMouseOver = (e) => {
       const target = e.target;
+      if (!target) return;
+
       const isHoverable =
         target.tagName === 'A' ||
         target.tagName === 'BUTTON' ||
         target.closest('a') ||
         target.closest('button') ||
-        target.closest('.video-card') ||
-        target.closest('.social-btn') ||
-        target.closest('.primary-btn') ||
-        target.closest('.hero-service-link') ||
-        target.closest('.skill-card') ||
+        target.closest('.hover-target') ||
         target.classList.contains('hover-target');
 
       if (isHoverable) {
