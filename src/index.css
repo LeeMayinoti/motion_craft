@@ -171,20 +171,23 @@ html.lenis, html.lenis body {
   width: 100%;
 }
 
-/* Foreground Pinned Grid Container */
+/* Foreground Pinned Container — Right detail only (left is now absolute bottom-left) */
 .camera-container {
-  position: relative;
+  position: absolute;
+  top: 0;
+  right: 0;
   width: 100%;
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 40px;
-  display: grid;
-  grid-template-columns: 1fr 1.7fr 1.1fr; /* Constrain left, center (empty for video), and right blocks */
-  align-items: center;
-  gap: 40px;
-  z-index: 10;
   height: 100vh;
-  pointer-events: none; /* Let pointer events pass through to background or child elements */
+  margin: 0 auto;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 40px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
 }
 
 /* Full-Screen Background Video Cards Container */
@@ -265,8 +268,26 @@ html.lenis, html.lenis body {
 .showcase-bg-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(12, 24, 21, 0.55) 0%, rgba(12, 24, 21, 0.88) 100%);
-  z-index: 7; /* Placed in front of active video card, behind bubbles */
+  background: radial-gradient(ellipse at center, rgba(12, 24, 21, 0.45) 0%, rgba(12, 24, 21, 0.82) 100%);
+  z-index: 7;
+  pointer-events: none;
+}
+
+/* Bottom-left radial gradient — dark center fading to transparent in all directions */
+.showcase-bottom-left-gradient {
+  position: absolute;
+  bottom: -20%;
+  left: -15%;
+  width: 75%;
+  height: 75%;
+  background: radial-gradient(
+    circle at center,
+    rgba(12, 24, 21, 0.95) 0%,
+    rgba(12, 24, 21, 0.75) 25%,
+    rgba(12, 24, 21, 0.40) 50%,
+    rgba(12, 24, 21, 0.0) 75%
+  );
+  z-index: 9;
   pointer-events: none;
 }
 
@@ -385,20 +406,23 @@ html.lenis, html.lenis body {
 /* ══════════════════════════════════════════════
    Project Detail Sidebar Columns
    ══════════════════════════════════════════════ */
+/* Left detail panel — pinned to bottom-left corner of viewport */
 .project-detail-column-left {
-  position: relative;
-  width: 100%;
-  height: 250px;
+  position: absolute;
+  bottom: 80px;
+  left: 48px;
+  width: 380px;
   z-index: 12;
-  pointer-events: auto; /* Enable mouse events inside grid columns */
+  pointer-events: auto;
 }
 
 .project-detail-column-right {
   position: relative;
-  width: 100%;
-  height: 380px;
+  width: 340px;
+  flex-shrink: 0;
+  height: 460px;
   z-index: 12;
-  pointer-events: auto; /* Enable mouse events inside grid columns */
+  pointer-events: auto;
 }
 
 @media (max-width: 992px) {
@@ -410,13 +434,13 @@ html.lenis, html.lenis body {
 
 .project-detail-left {
   position: absolute;
-  top: 50%;
+  bottom: 0;
   left: 0;
   width: 100%;
-  transform: translateY(-50%) translateX(-25px);
+  transform: translateY(10px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
@@ -430,7 +454,7 @@ html.lenis, html.lenis body {
   transform: translateY(-50%) translateX(25px);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
@@ -451,23 +475,107 @@ html.lenis, html.lenis body {
   }
 }
 
-.project-detail-left.active,
+.project-detail-left.active {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .project-detail-right.active {
   pointer-events: auto;
   opacity: 1;
   transform: translateY(-50%) translateX(0);
 }
 
-/* Opaque Frosted Liquid Glass Card */
+/* Frosted Translucent Glass Card — Premium Multi-Layer Glass */
 .frosted-glass-card {
-  background: rgba(9, 18, 16, 0.68); /* Opaque dark green glass wash */
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px; /* Organic capsule corner radius */
-  padding: 24px 28px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55), inset 0 0 15px rgba(255, 255, 255, 0.04);
-  margin-bottom: 24px;
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 40%,
+    rgba(9, 18, 16, 0.45) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(28px) saturate(1.6);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  border-radius: 24px;
+  padding: 28px 30px;
+  box-shadow:
+    /* Outer ambient shadow */
+    0 30px 60px rgba(0, 0, 0, 0.5),
+    0 8px 20px rgba(0, 0, 0, 0.35),
+    /* Inner edge glow — top/left specular highlight */
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 1px 0 0 rgba(255, 255, 255, 0.06),
+    /* Subtle bottom/right inner shadow for depth */
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    inset -1px 0 0 rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  isolation: isolate;
+  margin-bottom: 0;
+}
+
+/* Top specular shine — simulates light hitting the glass from above */
+.frosted-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0.04) 35%,
+    rgba(255, 255, 255, 0.0) 100%
+  );
+  border-radius: 24px 24px 0 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Accent refraction glow — subtle warm light bleeding through the glass */
+.frosted-glass-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  right: -15%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle,
+    rgba(235, 134, 13, 0.08) 0%,
+    rgba(235, 134, 13, 0.0) 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(30px);
+}
+
+/* Inner section spacing */
+.glass-card-section {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Translucent divider between sections inside the glass */
+.glass-card-divider {
+  height: 1px;
+  margin: 16px 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.0) 0%,
+    rgba(255, 255, 255, 0.10) 30%,
+    rgba(255, 255, 255, 0.10) 70%,
+    rgba(255, 255, 255, 0.0) 100%
+  );
+  position: relative;
+  z-index: 2;
 }
 
 .project-index-label {

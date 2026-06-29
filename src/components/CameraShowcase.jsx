@@ -556,40 +556,40 @@ const CameraShowcase = () => {
           ))}
         </div>
 
-        <div className="camera-container">
-          
-          {/* Left Column: Left details mapped */}
-          <div className="project-detail-column-left">
-            {projectsData.map((project, idx) => {
-              const isActive = idx === activeIndex;
-              return (
-                <div
-                  key={project.id}
-                  ref={(el) => (leftRefs.current[idx] = el)}
-                  className={`project-detail-left ${isActive ? 'active' : ''}`}
-                >
-                  <span className="project-index-label" style={{ opacity: idx === 0 ? 1 : 0 }}>
-                    Project 0{project.id}
-                  </span>
-                  <h3 className="project-client-name">
-                    {project.client.split(' ').map((word, wIdx) => (
-                      <span key={wIdx} style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom' }}>
-                        <span className="client-word" style={{ display: 'inline-block', transform: idx === 0 ? 'translate3d(0,0,0)' : 'translate3d(0,100%,0)' }}>
-                          {word}&nbsp;
-                        </span>
-                      </span>
-                    ))}
-                  </h3>
-                  <span className="project-category-label" style={{ opacity: idx === 0 ? 1 : 0 }}>
-                    {project.category}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+        {/* Bottom-left gradient overlay for left detail legibility */}
+        <div className="showcase-bottom-left-gradient" />
 
-          {/* Center Column: Empty space so full-bleed video is showcased cleanly */}
-          <div className="showcase-center-column-gap" style={{ width: '100%', height: '1px' }} />
+        {/* Left Details — Pinned to bottom-left corner */}
+        <div className="project-detail-column-left">
+          {projectsData.map((project, idx) => {
+            const isActive = idx === activeIndex;
+            return (
+              <div
+                key={project.id}
+                ref={(el) => (leftRefs.current[idx] = el)}
+                className={`project-detail-left ${isActive ? 'active' : ''}`}
+              >
+                <span className="project-index-label" style={{ opacity: idx === 0 ? 1 : 0 }}>
+                  Project 0{project.id}
+                </span>
+                <h3 className="project-client-name">
+                  {project.client.split(' ').map((word, wIdx) => (
+                    <span key={wIdx} style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom' }}>
+                      <span className="client-word" style={{ display: 'inline-block', transform: idx === 0 ? 'translate3d(0,0,0)' : 'translate3d(0,100%,0)' }}>
+                        {word}&nbsp;
+                      </span>
+                    </span>
+                  ))}
+                </h3>
+                <span className="project-category-label" style={{ opacity: idx === 0 ? 1 : 0 }}>
+                  {project.category}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="camera-container">
 
           {/* Right Column: Right details mapped */}
           <div className="project-detail-column-right">
@@ -603,42 +603,49 @@ const CameraShowcase = () => {
                   ref={(el) => (rightRefs.current[idx] = el)}
                   className={`project-detail-right ${isActive ? 'active' : ''}`}
                 >
-                  {/* Frosted Liquid Glass Card for Summary */}
+                  {/* Frosted Translucent Glass Card wrapping all detail content */}
                   <div className="frosted-glass-card">
-                    <h4 className="info-section-title summary-title" style={{ opacity: idx === 0 ? 1 : 0 }}>Summary</h4>
-                    <p className="project-summary-text" style={{ opacity: idx === 0 ? 1 : 0 }}>{project.summary}</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="info-section-title services-title" style={{ opacity: idx === 0 ? 1 : 0 }}>Services</h4>
-                    <div className="project-services-tags">
-                      {project.services.map((service, sIdx) => (
-                        <span
-                          key={sIdx}
-                          className="service-badge"
-                          style={{ transform: idx === 0 ? 'scale(1)' : 'scale(0)' }}
-                        >
-                          {service}
-                        </span>
-                      ))}
+                    <div className="glass-card-section">
+                      <h4 className="info-section-title summary-title" style={{ opacity: idx === 0 ? 1 : 0 }}>Summary</h4>
+                      <p className="project-summary-text" style={{ opacity: idx === 0 ? 1 : 0 }}>{project.summary}</p>
                     </div>
-                  </div>
 
-                  {/* Multi-video Playlist Selector for NAMPA */}
-                  {isNampa && project.mediaFiles && (
-                    <div className="nampa-switcher-wrap" style={{ opacity: idx === 0 ? 1 : 0 }}>
-                      <h4 className="info-section-title">Campaign Media Playlist</h4>
-                      {projectsData[1].mediaFiles.map((file, fIdx) => (
-                        <button
-                          key={fIdx}
-                          className={`switcher-btn hover-target ${nampaVideoUrl === file.url ? 'active' : ''}`}
-                          onClick={() => handleNampaVideoSelect(file.url)}
-                        >
-                          {file.label}
-                        </button>
-                      ))}
+                    <div className="glass-card-divider" />
+
+                    <div className="glass-card-section">
+                      <h4 className="info-section-title services-title" style={{ opacity: idx === 0 ? 1 : 0 }}>Services</h4>
+                      <div className="project-services-tags">
+                        {project.services.map((service, sIdx) => (
+                          <span
+                            key={sIdx}
+                            className="service-badge"
+                            style={{ transform: idx === 0 ? 'scale(1)' : 'scale(0)' }}
+                          >
+                            {service}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  )}
+
+                    {/* Multi-video Playlist Selector for NAMPA */}
+                    {isNampa && project.mediaFiles && (
+                      <>
+                        <div className="glass-card-divider" />
+                        <div className="glass-card-section nampa-switcher-wrap" style={{ opacity: idx === 0 ? 1 : 0, marginTop: 0 }}>
+                          <h4 className="info-section-title">Campaign Media Playlist</h4>
+                          {projectsData[1].mediaFiles.map((file, fIdx) => (
+                            <button
+                              key={fIdx}
+                              className={`switcher-btn hover-target ${nampaVideoUrl === file.url ? 'active' : ''}`}
+                              onClick={() => handleNampaVideoSelect(file.url)}
+                            >
+                              {file.label}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               );
             })}
